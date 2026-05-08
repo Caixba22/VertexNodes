@@ -1,76 +1,41 @@
-/* 1. TUS VARIABLES DE COLOR (Las conservamos) */
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #050810; /* Ajustado al fondo oscuro espacial */
-  --border: rgba(0, 229, 255, 0.2);
-  --accent: #00e5ff;
-  --sans: system-ui, -apple-system, sans-serif;
-}
+@import "tailwindcss";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-  }
-}
-
-/* 2. EL RESET ESTRUCTURAL 3D (Crucial para Three.js) */
-* {
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--bg);
-  color: white;
-  font-family: var(--sans);
-  overflow: hidden; /* Prohibido el scroll nativo */
-}
-
-/* 3. NUESTRO LAYOUT RESPONSIVO */
-.layout-container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  flex-direction: row; 
-}
-
-.layout-sidebar {
-  width: 350px;
-  background-color: #0a0f19;
-  border-right: 1px solid var(--border);
-  padding: 20px;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-}
-
-.layout-main {
-  flex: 1;
-  position: relative;
-}
-
-/* MAGIA RESPONSIVA (CELULARES) */
-@media (max-width: 768px) {
-  .layout-container {
-    flex-direction: column-reverse; 
-  }
+/* 1. CONFIGURACIÓN DEL MOTOR DE DISEÑO (Tailwind 4) */
+@theme {
+  /* Sincronizamos las variables de VertexNodes */
+  --color-surface: #0f172a;
+  --color-surface-hover: #1e293b;
+  --color-algo-border: rgba(0, 229, 255, 0.2);
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-algo-accent: #00e5ff;
   
-  .layout-sidebar {
-    width: 100%;
-    height: 45vh; 
-    border-right: none;
-    border-top: 1px solid var(--border);
-    overflow-y: auto; 
+  /* Colores para la Lógica de Datos */
+  --color-data-active: #6366f1;
+  --color-data-sorted: #10b981;
+  --color-data-critical: #f43f5e;
+}
+
+/* 2. RESET ESTRUCTURAL PARA WEBGL */
+/* Forzamos que el contenedor sea un viewport rígido para evitar saltos en el Canvas */
+@layer base {
+  html, body, #root {
+    @apply m-0 p-0 w-screen h-screen bg-[#020617] text-white overflow-hidden select-none;
+    /* select-none evita que el usuario resalte texto accidentalmente mientras interactúa con el 3D */
   }
 
-  .layout-main {
-    flex: none;
-    height: 55vh; 
+  /* Optimizamos la renderización de fuentes para interfaces técnicas */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* 3. UTILIDADES DE VIDRIO (GLASSMORPHISM) */
+/* Útiles para los paneles que flotan sobre Three.js */
+@layer utilities {
+  .glass-panel {
+    @apply bg-surface/60 backdrop-blur-md border border-algo-border;
   }
 }

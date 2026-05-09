@@ -1,0 +1,20 @@
+// src/shared/constants/applyThemeVars.ts
+import { ALGO_THEME } from "./theme";
+
+export const applyThemeVars = () => {
+  const root = document.documentElement;
+
+  root.style.setProperty("--algo-data-background", ALGO_THEME.data.background);
+  root.style.setProperty("--algo-data-default", ALGO_THEME.data.default);
+  root.style.setProperty("--algo-data-active", ALGO_THEME.data.active);
+  root.style.setProperty("--algo-data-comparing", ALGO_THEME.data.comparing);
+  root.style.setProperty("--algo-data-sorted", ALGO_THEME.data.sorted);
+  root.style.setProperty("--algo-data-critical", ALGO_THEME.data.critical);
+
+  root.style.setProperty("--algo-ui-surface", ALGO_THEME.ui.surface);
+  root.style.setProperty("--algo-ui-surface-hover", ALGO_THEME.ui.surfaceHover);
+  root.style.setProperty("--algo-ui-border", ALGO_THEME.ui.border);
+  root.style.setProperty("--algo-ui-text-primary", ALGO_THEME.ui.textPrimary);
+  root.style.setProperty("--algo-ui-text-secondary", ALGO_THEME.ui.textSecondary);
+  root.style.setProperty("--algo-ui-accent", ALGO_THEME.ui.accent);
+};

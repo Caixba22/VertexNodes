@@ -1,14 +1,21 @@
 // src/pages/HomePage.tsx
 import { HeroSection } from "../sections/heroSection/HeroSection";
-import { MenuSection } from "../sections/menuSection/MenuSection";
+import { FloatingMenuSection } from "../sections/floatingMenuSection/FloatingMenuSection";
 import { WorkspaceSection } from "../sections/workSpaceSection/WorkspaceSection";
+
 
 export const HomePage = () => {
   return (
-    <article className="w-full flex flex-col gap-y-20 pb-20">
+    <article className="relative w-full flex flex-col gap-y-20 pb-20">
+      <FloatingMenuSection />
+
       <HeroSection />
-      <MenuSection />
-      <WorkspaceSection />
+
+   
+
+      <section id="workspace" className="scroll-mt-28">
+        <WorkspaceSection />
+      </section>
     </article>
   );
 };

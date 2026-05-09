@@ -1,13 +1,17 @@
+// src/layouts/AppLayout.tsx
+import type { ReactNode } from "react";
 import { HeaderSection } from "../sections/headerSection/HeaderSection";
 
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+type AppLayoutProps = {
+  children: ReactNode;
+};
+
+export const AppLayout = ({ children }: AppLayoutProps) => {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-slate-50 antialiased">
-      {/* Header persistente */}
+    <div className="min-h-dvh w-full bg-data-background text-text-primary antialiased">
       <HeaderSection />
 
-      {/* Contenedor elástico para el contenido y el futuro Canvas 3D */}
-      <main className="flex-1 flex flex-col w-full">
+      <main className="relative w-full bg-data-background">
         {children}
       </main>
     </div>

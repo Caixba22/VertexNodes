@@ -1,27 +1,46 @@
 // src/sections/headerSection/HeaderSection.tsx
-
 export const HeaderSection = () => {
   return (
-    <header className="h-16 shrink-0 sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 flex items-center justify-between">
-      {/* Brand / Logo */}
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">
-          A
+    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between border-b border-algo-border bg-data-background/80 px-6 backdrop-blur-xl">
+      <div className="flex items-center gap-3">
+        <div className="algo-glow flex h-9 w-9 items-center justify-center rounded-2xl bg-data-active text-text-primary shadow-lg">
+          <span className="font-black tracking-tighter">V</span>
         </div>
-        <span className="font-bold text-xl tracking-tighter text-slate-900 uppercase">
-          AlgoStruct <span className="text-indigo-600">3D</span>
+
+        <span className="text-xl font-black uppercase tracking-tighter text-text-primary">
+          Vertex
+          <span className="text-algo-accent">Nodes</span>
         </span>
       </div>
 
-      {/* Navigation / Info */}
       <nav className="flex items-center gap-6">
-        <div className="hidden md:flex gap-4 text-sm font-medium text-slate-500">
-          <a href="#" className="hover:text-indigo-600 transition-colors">Documentación</a>
-          <a href="#" className="hover:text-indigo-600 transition-colors">GitHub</a>
+        <div className="hidden gap-5 text-sm font-medium text-text-secondary md:flex">
+          <a
+            href="#algorithm-menu"
+            className="transition-colors hover:text-data-comparing"
+          >
+            Algoritmos
+          </a>
+
+          <a
+            href="#workspace"
+            className="transition-colors hover:text-algo-accent"
+          >
+            Workspace
+          </a>
+
+          <a
+            href="#"
+            className="transition-colors hover:text-data-sorted"
+          >
+            GitHub
+          </a>
         </div>
-        <div className="h-4 w-px bg-slate-200" />
-        <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-2 py-1 rounded-full uppercase tracking-widest">
-          v1.0.0-stable
+
+        <div className="h-5 w-px bg-algo-border" />
+
+        <span className="rounded-full border border-algo-border bg-surface px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-text-secondary">
+          v1.0.0
         </span>
       </nav>
     </header>

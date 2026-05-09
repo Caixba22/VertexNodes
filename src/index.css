@@ -1,41 +1,54 @@
 @import "tailwindcss";
 
-/* 1. CONFIGURACIÓN DEL MOTOR DE DISEÑO (Tailwind 4) */
 @theme {
-  /* Sincronizamos las variables de VertexNodes */
-  --color-surface: #0f172a;
-  --color-surface-hover: #1e293b;
-  --color-algo-border: rgba(0, 229, 255, 0.2);
-  --color-text-primary: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-algo-accent: #00e5ff;
-  
-  /* Colores para la Lógica de Datos */
-  --color-data-active: #6366f1;
-  --color-data-sorted: #10b981;
-  --color-data-critical: #f43f5e;
+  --color-data-background: var(--algo-data-background);
+  --color-data-default: var(--algo-data-default);
+  --color-data-active: var(--algo-data-active);
+  --color-data-comparing: var(--algo-data-comparing);
+  --color-data-sorted: var(--algo-data-sorted);
+  --color-data-critical: var(--algo-data-critical);
+
+  --color-surface: var(--algo-ui-surface);
+  --color-surface-hover: var(--algo-ui-surface-hover);
+  --color-algo-border: var(--algo-ui-border);
+  --color-text-primary: var(--algo-ui-text-primary);
+  --color-text-secondary: var(--algo-ui-text-secondary);
+  --color-algo-accent: var(--algo-ui-accent);
 }
 
-/* 2. RESET ESTRUCTURAL PARA WEBGL */
-/* Forzamos que el contenedor sea un viewport rígido para evitar saltos en el Canvas */
 @layer base {
-  html, body, #root {
-    @apply m-0 p-0 w-screen h-screen bg-[#020617] text-white overflow-hidden select-none;
-    /* select-none evita que el usuario resalte texto accidentalmente mientras interactúa con el 3D */
+  html,
+  body,
+  #root {
+    @apply m-0 p-0 w-full min-h-full bg-data-background text-text-primary;
   }
 
-  /* Optimizamos la renderización de fuentes para interfaces técnicas */
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
+    @apply overflow-x-hidden overflow-y-auto antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-family: system-ui, -apple-system, sans-serif;
   }
+
+  #root {
+    @apply min-h-dvh;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
 }
 
-/* 3. UTILIDADES DE VIDRIO (GLASSMORPHISM) */
-/* Útiles para los paneles que flotan sobre Three.js */
 @layer utilities {
   .glass-panel {
-    @apply bg-surface/60 backdrop-blur-md border border-algo-border;
+    @apply bg-surface/70 backdrop-blur-xl border border-algo-border;
+  }
+
+  .algo-glow {
+    box-shadow: 0 0 32px color-mix(in srgb, var(--color-data-active) 35%, transparent);
   }
 }

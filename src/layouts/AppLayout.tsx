@@ -1,10 +1,24 @@
+// Ruta:
 // src/layouts/AppLayout.tsx
+
+/**
+ * AppLayout
+ *
+ * Layout principal de la aplicación.
+ *
+ * Responsabilidades:
+ * - Aplicar el fondo global.
+ * - Mantener el HeaderSection fijo dentro de la estructura general.
+ * - Renderizar el contenido principal de cada página.
+ */
+
 import type { ReactNode } from "react";
+
 import { HeaderSection } from "../sections/headerSection/HeaderSection";
 
-type AppLayoutProps = {
+interface AppLayoutProps {
   children: ReactNode;
-};
+}
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   return (

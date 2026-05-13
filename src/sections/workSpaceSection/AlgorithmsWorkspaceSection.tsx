@@ -1,12 +1,53 @@
+// Ruta:
+// src/sections/workSpaceSection/AlgorithmsWorkspaceSection.tsx
+
+/**
+ * AlgorithmsWorkspaceSection
+ *
+ * Workspace visual para algoritmos.
+ *
+ * Responsabilidades:
+ * - Mostrar el selector de algoritmos disponibles.
+ * - Detectar qué algoritmo eligió el usuario desde el catálogo.
+ * - Montar la escena 3D correspondiente dentro de Canvas.
+ * - Mostrar controles de reproducción para ejecutar/pausar/resetear.
+ *
+ * Conexión:
+ * selectItem() cambia selectedItemId.
+ * Si selectedItemId === "bubble-sort", se monta SortingScene.
+ * SortingScene usa useSortingRunner.
+ * useSortingRunner ejecuta bubbleSortGenerator.
+ */
+
+import { Canvas } from "@react-three/fiber";
+
 import { CATALOG_CATEGORIES } from "../../shared/constants/catalogCategories";
 import { CATALOG_ITEMS } from "../../shared/constants/catalogItems";
+import { PlaybackControls } from "../../shared/components/ui/PlaybackControls";
+
 import { useCatalogSelectionStore } from "../../store/useCatalogSelectionStore";
+import { useAlgoRuntimeStore } from "../../store/useAlgoRuntimeStore";
+
+import { SortingScene } from "../../features/algorithms/sorting/scene/SortingScene";
+import type { DataElement } from "../../features/algorithms/sorting/components/SortingBars";
+
+/**
+ * Arreglo inicial de prueba para Bubble Sort.
+ * Después podemos mover esto a una constante propia de sorting.
+ */
+const BUBBLE_SORT_INITIAL_ARRAY = [8, 3, 6, 1, 9, 4, 2, 7, 5];
+
+const bubbleSortData: DataElement[] = BUBBLE_SORT_INITIAL_ARRAY.map((value) => ({
+  value,
+}));
 
 export const AlgorithmsWorkspaceSection = () => {
   const selectedItemId = useCatalogSelectionStore(
     (state) => state.selectedItemId,
   );
+
   const selectItem = useCatalogSelectionStore((state) => state.selectItem);
+  const resetRuntime = useAlgoRuntimeStore((state) => state.reset);
 
   const algorithmItems = CATALOG_ITEMS.filter(
     (item) => item.type === "algorithm",
@@ -17,6 +58,65 @@ export const AlgorithmsWorkspaceSection = () => {
   ).sort((a, b) => a.order - b.order);
 
   const selectedItem = algorithmItems.find((item) => item.id === selectedItemId);
+
+  const handleSelectAlgorithm = (itemId: string) => {
+    /**
+     * Cada vez que se cambia de algoritmo, se reinicia el runtime.
+     * Así evitamos que quede corriendo un algoritmo anterior.
+     */
+    resetRuntime();
+    selectItem(itemId);
+  };
+
+  const renderSelectedAlgorithmScene = () => {
+    if (!selectedItem) {
+      return (
+        <div className="flex h-full items-center justify-center px-6 text-center">
+          <p className="text-4xl font-black uppercase tracking-tighter text-text-primary/10 md:text-6xl">
+            Selecciona un algoritmo
+          </p>
+        </div>
+      );
+    }
+
+    /**
+     * IMPORTANTE:
+     * Este id debe coincidir exactamente con el id definido en catalogItems.ts.
+     */
+    if (selectedItem.id === "bubble-sort") {
+      return (
+        <div className="flex h-full w-full flex-col">
+          <div className="border-b border-algo-border bg-surface/80 p-4">
+            <PlaybackControls />
+          </div>
+
+          <div className="min-h-0 flex-1">
+            <Canvas className="h-full w-full">
+              <SortingScene
+                data={bubbleSortData}
+                rawArray={BUBBLE_SORT_INITIAL_ARRAY}
+              />
+            </Canvas>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex h-full items-center justify-center px-6 text-center">
+        <div>
+          <p className="text-4xl font-black uppercase tracking-tighter text-text-primary/10 md:text-6xl">
+            {selectedItem.name}
+          </p>
+
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-text-secondary">
+            Este algoritmo está en el catálogo, pero todavía no tiene escena 3D
+            conectada.
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section className="w-full px-6 pb-32">
@@ -47,7 +147,7 @@ export const AlgorithmsWorkspaceSection = () => {
             <select
               id="algorithm-select"
               value={selectedItemId ?? ""}
-              onChange={(event) => selectItem(event.target.value)}
+              onChange={(event) => handleSelectAlgorithm(event.target.value)}
               className="w-full appearance-none rounded-2xl border border-algo-border bg-data-background px-5 py-4 pr-12 text-sm font-semibold text-text-primary outline-none transition hover:bg-surface-hover focus:border-data-active"
             >
               <option value="" disabled>
@@ -101,19 +201,7 @@ export const AlgorithmsWorkspaceSection = () => {
         </div>
 
         <div className="mt-8 aspect-video overflow-hidden rounded-[2rem] border border-algo-border bg-data-background">
-          <div className="flex h-full items-center justify-center px-6 text-center">
-            <div>
-              <p className="text-4xl font-black uppercase tracking-tighter text-text-primary/10 md:text-6xl">
-                {selectedItem?.name ?? "Selecciona un algoritmo"}
-              </p>
-
-              {selectedItem && (
-                <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-text-secondary">
-                  {selectedItem.description}
-                </p>
-              )}
-            </div>
-          </div>
+          {renderSelectedAlgorithmScene()}
         </div>
       </div>
     </section>

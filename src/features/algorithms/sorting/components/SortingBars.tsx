@@ -6,17 +6,34 @@
  *
  * Dibuja muchas barras 3D usando InstancedMesh.
  * Esto permite representar arreglos grandes con un solo draw call.
+ *
+ * Responsabilidad:
+ * - Crear el InstancedMesh.
+ * - Crear una geometría base compatible con vertexColors.
+ * - Aplicar la transformación inicial de cada barra.
+ * - Pintar el estado inicial usando ALGO_THEME.data.default.
+ *
+ * Importante:
+ * - No contiene colores de estado hardcodeados.
+ * - Los colores visuales vienen desde ALGO_THEME.
+ * - El color blanco de la geometría es solo un multiplicador neutral
+ *   para permitir que instanceColor se vea correctamente.
  */
 
 import {
   forwardRef,
-  useLayoutEffect,
-  useRef,
   useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
 } from "react";
 import * as THREE from "three";
 
 import { ALGO_THEME } from "../../../../shared/constants/theme";
+import {
+  applyBarTransform,
+  getSafeMaxValue,
+} from "../utils/sortingGeometry";
 
 export interface DataElement {
   value: number;
@@ -27,47 +44,43 @@ interface SortingBarsProps {
 }
 
 const dummy = new THREE.Object3D();
-const defaultColor = new THREE.Color(ALGO_THEME.data.default);
 
-/**
- * Evita división entre cero o valores inválidos.
- */
-export const getSafeMaxValue = (values: number[]) => {
-  if (values.length === 0) return 1;
+const createBarGeometry = () => {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const positionAttribute = geometry.getAttribute("position");
 
-  const max = Math.max(...values);
+  const vertexColors = new Float32Array(positionAttribute.count * 3);
 
-  return Number.isFinite(max) && max > 0 ? max : 1;
+  for (let index = 0; index < positionAttribute.count; index++) {
+    const offset = index * 3;
+
+    vertexColors[offset] = 1;
+    vertexColors[offset + 1] = 1;
+    vertexColors[offset + 2] = 1;
+  }
+
+  geometry.setAttribute(
+    "color",
+    new THREE.BufferAttribute(vertexColors, 3),
+  );
+
+  return geometry;
 };
 
-/**
- * Calcula posición y escala de una barra.
- * Se usa tanto al crear las barras como al animarlas.
- */
-export const applyBarTransform = (
-  object: THREE.Object3D,
-  index: number,
-  total: number,
-  value: number,
-  maxValue: number,
-) => {
-  const spacing = 1.15;
-  const width = 0.75;
-  const depth = 0.75;
-  const maxHeight = 6;
+const forceMaterialUpdate = (mesh: THREE.InstancedMesh) => {
+  const materials = Array.isArray(mesh.material)
+    ? mesh.material
+    : [mesh.material];
 
-  const height = Math.max(0.15, (value / maxValue) * maxHeight);
-  const x = (index - (total - 1) / 2) * spacing;
-
-  object.position.set(x, height / 2, 0);
-  object.scale.set(width, height, depth);
-  object.rotation.set(0, 0, 0);
-  object.updateMatrix();
+  materials.forEach((material) => {
+    material.needsUpdate = true;
+  });
 };
 
 export const SortingBars = forwardRef<THREE.InstancedMesh, SortingBarsProps>(
   ({ data }, ref) => {
     const meshRef = useRef<THREE.InstancedMesh>(null);
+    const geometry = useMemo(() => createBarGeometry(), []);
 
     useImperativeHandle(ref, () => meshRef.current as THREE.InstancedMesh);
 
@@ -79,6 +92,9 @@ export const SortingBars = forwardRef<THREE.InstancedMesh, SortingBarsProps>(
       const values = data.map((item) => item.value);
       const total = values.length;
       const maxValue = getSafeMaxValue(values);
+      const defaultColor = new THREE.Color(ALGO_THEME.data.default);
+
+      mesh.count = total;
 
       for (let index = 0; index < total; index++) {
         applyBarTransform(dummy, index, total, values[index], maxValue);
@@ -92,17 +108,21 @@ export const SortingBars = forwardRef<THREE.InstancedMesh, SortingBarsProps>(
       if (mesh.instanceColor) {
         mesh.instanceColor.needsUpdate = true;
       }
+
+      forceMaterialUpdate(mesh);
     }, [data]);
 
     return (
-      <instancedMesh ref={meshRef} args={[undefined, undefined, data.length]}>
-        <boxGeometry args={[1, 1, 1]} />
-
+      <instancedMesh
+        key={data.length}
+        ref={meshRef}
+        args={[geometry, undefined, data.length]}
+      >
         <meshStandardMaterial
           vertexColors
-          color="white"
-          roughness={0.35}
-          metalness={0.1}
+          toneMapped={false}
+          roughness={0.45}
+          metalness={0}
         />
       </instancedMesh>
     );

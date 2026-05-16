@@ -32,10 +32,40 @@ import { SortingScene } from "../../features/algorithms/sorting/scene/SortingSce
 import type { DataElement } from "../../features/algorithms/sorting/components/SortingBars";
 
 /**
- * Arreglo inicial de prueba para Bubble Sort.
- * Después podemos mover esto a una constante propia de sorting.
+ * Cantidad inicial de barras para Bubble Sort.
+ *
+ * Si quieres más barras, cambia este número.
+ * Recomendado:
+ * - 16 a 24 para visualización clara.
+ * - 32 o más si ajustas cámara y spacing.
  */
-const BUBBLE_SORT_INITIAL_ARRAY = [8, 3, 6, 1, 9, 4, 2, 7, 5];
+const BUBBLE_SORT_BAR_COUNT = 24;
+
+/**
+ * Genera un arreglo del 1 al tamaño indicado
+ * y lo revuelve usando Fisher-Yates.
+ */
+const createShuffledArray = (size: number): number[] => {
+  const values = Array.from({ length: size }, (_, index) => index + 1);
+
+  for (let index = values.length - 1; index > 0; index--) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+
+    [values[index], values[randomIndex]] = [
+      values[randomIndex],
+      values[index],
+    ];
+  }
+
+  return values;
+};
+
+/**
+ * Arreglo inicial aleatorio para Bubble Sort.
+ *
+ * Cada número representa la altura de una barra.
+ */
+const BUBBLE_SORT_INITIAL_ARRAY = createShuffledArray(BUBBLE_SORT_BAR_COUNT);
 
 const bubbleSortData: DataElement[] = BUBBLE_SORT_INITIAL_ARRAY.map((value) => ({
   value,
@@ -72,7 +102,7 @@ export const AlgorithmsWorkspaceSection = () => {
     if (!selectedItem) {
       return (
         <div className="flex h-full items-center justify-center px-6 text-center">
-          <p className="text-4xl font-black uppercase tracking-tighter text-text-primary/10 md:text-6xl">
+          <p className="text-3xl font-black uppercase tracking-tighter text-text-primary/10 sm:text-4xl md:text-6xl">
             Selecciona un algoritmo
           </p>
         </div>
@@ -86,7 +116,7 @@ export const AlgorithmsWorkspaceSection = () => {
     if (selectedItem.id === "bubble-sort") {
       return (
         <div className="flex h-full w-full flex-col">
-          <div className="border-b border-algo-border bg-surface/80 p-4">
+          <div className="border-b border-algo-border bg-surface/80 p-3 sm:p-4">
             <PlaybackControls />
           </div>
 
@@ -105,7 +135,7 @@ export const AlgorithmsWorkspaceSection = () => {
     return (
       <div className="flex h-full items-center justify-center px-6 text-center">
         <div>
-          <p className="text-4xl font-black uppercase tracking-tighter text-text-primary/10 md:text-6xl">
+          <p className="text-3xl font-black uppercase tracking-tighter text-text-primary/10 sm:text-4xl md:text-6xl">
             {selectedItem.name}
           </p>
 
@@ -119,18 +149,18 @@ export const AlgorithmsWorkspaceSection = () => {
   };
 
   return (
-    <section className="w-full px-6 pb-32">
-      <div className="mx-auto max-w-7xl rounded-[2.5rem] border border-algo-border bg-surface p-8 shadow-2xl">
-        <div className="mb-8 border-b border-algo-border pb-6">
+    <section className="w-full px-3 pb-24 sm:px-6 sm:pb-32">
+      <div className="mx-auto max-w-7xl rounded-[2rem] border border-algo-border bg-surface p-4 shadow-2xl sm:rounded-[2.5rem] sm:p-8">
+        <div className="mb-6 border-b border-algo-border pb-6 sm:mb-8">
           <p className="font-mono text-xs uppercase tracking-widest text-data-comparing">
             Algorithms Workspace
           </p>
 
-          <h2 className="mt-2 text-3xl font-black text-text-primary">
+          <h2 className="mt-2 text-2xl font-black text-text-primary sm:text-3xl">
             Algoritmos
           </h2>
 
-          <p className="mt-3 max-w-2xl text-text-secondary">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary sm:text-base">
             Selecciona un algoritmo para visualizar su ejecución paso a paso.
           </p>
         </div>
@@ -178,7 +208,7 @@ export const AlgorithmsWorkspaceSection = () => {
           </div>
 
           {selectedItem && (
-            <div className="mt-4 rounded-2xl border border-algo-border bg-data-background/60 p-5">
+            <div className="mt-4 rounded-2xl border border-algo-border bg-data-background/60 p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h3 className="font-bold text-text-primary">
@@ -200,7 +230,7 @@ export const AlgorithmsWorkspaceSection = () => {
           )}
         </div>
 
-        <div className="mt-8 aspect-video overflow-hidden rounded-[2rem] border border-algo-border bg-data-background">
+        <div className="mt-8 h-[520px] overflow-hidden rounded-[1.5rem] border border-algo-border bg-data-background sm:h-[560px] sm:rounded-[2rem] md:aspect-video md:h-auto">
           {renderSelectedAlgorithmScene()}
         </div>
       </div>
